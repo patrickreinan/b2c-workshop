@@ -46,7 +46,7 @@ User attributes and token claims| Collect attribute e Return claim: Display Name
 > Crie um usuário e tente fazer o _login_ novamente.
 
 ## Adicionando uma nova claim
-# User Attributes
+### User Attributes
 Configuração|Valor
 -|-
 Name|Subscribe to Newsletter
