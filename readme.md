@@ -79,7 +79,7 @@ https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-user
 
 
 ### Preparando os arquivos do B2C
-- Faça um Find/Replace em todos os arquivos, substituindo ```youtenant.onmicrosoft.com``` por ```{Settings:Tenant}``` 
+- Faça um Find/Replace em todos os arquivos, substituindo ```yourtenant.onmicrosoft.com``` por ```{Settings:Tenant}``` 
 - Em ```TrustFrameworkExtensions.xml``` substitua ```ProxyIdentityExperienceFrameworkAppId``` por ```{Settings:ProxyIdentityExperienceFrameworkAppId}```
 - Em ```TrustFrameworkExtensions.xml``` substitua ```IdentityExperienceFrameworkAppId``` por ```{Settings:IdentityExperienceFrameworkAppId}```
 
@@ -106,5 +106,68 @@ Faça o upload dos arquivos na seguinte ordem:
 2. TrustFrameworkLocalization.xml
 3. TrustFrameworkExtensions.xml
 4. Outros 
-    
+
 Selecione a policy ```B2C_1A_SIGNUP_SIGNIN``` e faça o processo de SignUp/SignIn
+
+## Criando uma custom claim    
+* [Claims customizadas no B2C](https://docs.microsoft.com/en-us/azure/active-directory-b2c/user-flow-custom-attributes?pivots=b2c-custom-policy)
+
+
+### Preparando o ambiente
+* Localize o ```TechnicalProfile AAD-Common``` e atribua o ```ClientId``` e ```ApplicationObjectId``` da aplicação ```b2c-extensions-app. Do not modify. Used by AADB2C for storing user data.```.
+
+```xml
+ <ClaimsProvider>
+    <DisplayName>Azure Active Directory</DisplayName>
+    <TechnicalProfiles>
+      <TechnicalProfile Id="AAD-Common">
+        <Metadata>
+          <!--Insert b2c-extensions-app application ID here, for example: 11111111-1111-1111-1111-111111111111-->  
+          <Item Key="ClientId"></Item>
+          <!--Insert b2c-extensions-app application ObjectId here, for example: 22222222-2222-2222-2222-222222222222-->
+          <Item Key="ApplicationObjectId"></Item>
+        </Metadata>
+      </TechnicalProfile>
+    </TechnicalProfiles> 
+  </ClaimsProvider>
+```
+
+- No ```TrustFrameworkBase.xml``` dentro de um ```ClaimProvider``` adicione a claim ```extension_subscribetonewsletter```.
+```xml
+<ClaimType Id="extension_subscribetonewsletter">
+    <DisplayName>Subscribe to Newsletter</DisplayName>
+    <DataType>boolean</DataType>
+    <UserInputType>RadioSingleSelect</UserInputType>
+        <Restriction>
+        <Enumeration Text="Yes" Value="true" SelectByDefault="false" />
+        <Enumeration Text="No" Value="false" SelectByDefault="false" />
+        </Restriction>
+</ClaimType>
+```
+
+Localize o ```Technical Profile SelfAsserted-ProfileUpdate``` e adicione a ```claim``` em ```InputClaims``` e ```OutputClaims```.
+
+```xml
+<InputClaims>
+...
+<InputClaim ClaimTypeReferenceId="extension_subscribetonewsletter" />
+</InputClaims>
+
+<OutputClaims>
+...
+  <OutputClaim ClaimTypeReferenceId="extension_subscribetonewsletter" />
+</OutputClaims>
+```
+- No arquivo ```ProfileEdit.xml``` adicione a ```outputClaim extension_subscribetonewsletter```
+```xml
+<OutputClaim ClaimTypeReferenceId="extension_subscribetonewsletter" PartnerClaimType="subscribetonewsletter"/>
+```
+
+Localize o ```Technical Profile AAD-UserWriteProfileUsingObjectId```  adicione:
+
+```xml
+<PersistedClaim ClaimTypeReferenceId="extension_subscribetonewsletter" />
+```
+
+
+
