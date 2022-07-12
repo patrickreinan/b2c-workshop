@@ -90,7 +90,7 @@ Isso fará com que os valores em parenteses sejam substituídos pelos valores qu
 
 - Altere os valores do arquivo ```appsettings.json``` para os valores que estão no seu _tenant_ B2C
 - Faça a compilação das policies utilizando o comando ```B2C Build All Policies```
-- Vá em **Identity Framework Experience**:
+- Na Azure Vá em **Identity Framework Experience**:
     Vá em **Policy Keys** e crie uma as chaves:
     Configuração|Valor
     -|-
@@ -161,19 +161,19 @@ Localize o ```Technical Profile SelfAsserted-ProfileUpdate``` e adicione a ```cl
   <OutputClaim ClaimTypeReferenceId="extension_subscribetonewsletter" />
 </OutputClaims>
 ```
-- No arquivo ```ProfileEdit.xml``` adicione a ```outputClaim extension_subscribetonewsletter```
-```xml
-<OutputClaim ClaimTypeReferenceId="extension_subscribetonewsletter" PartnerClaimType="subscribetonewsletter"/>
-```
-
 Localize o ```Technical Profile AAD-UserWriteProfileUsingObjectId```  adicione:
 
 ```xml
 <PersistedClaim ClaimTypeReferenceId="extension_subscribetonewsletter" />
 ```
+No arquivo ```ProfileEdit.xml``` adicione a ```outputClaim extension_subscribetonewsletter```
+```xml
+<OutputClaim ClaimTypeReferenceId="extension_subscribetonewsletter" PartnerClaimType="subscribetonewsletter"/>
+```
+Faça o build e upload dos arquivos TrustFrameworkBase.xml e ProfileEdit.xml e teste o fluxo de de edição de perfil
 ## Adicionando uma chamada REST
 
-No arquivo ```TrustFrameworkBase.xml``` adicione a seção abaixo ao final do arquivo antes de ```</TrustFrameworkPolicy>```
+No arquivo ```TrustFrameworkBase.xml``` adicione a seção abaixo ao ```ClaimsProviders```
 
 ```xml
 
@@ -220,13 +220,13 @@ No arquivo ```TrustFrameworkBase.xml``` adicione a seção abaixo ao final do ar
 
 ```
 
-- No ```TrustFrameworkBase.xml``` adicione o ```OrchestrationStep``` antes do último:
+- No ```TrustFrameworkBase.xml``` na User Journey SignUpOrSignIn adicione o ```OrchestrationStep``` antes do último:
 ```xml
-   <OrchestrationStep Order="4" Type="ClaimsExchange">
-          <ClaimsExchanges>
-            <ClaimsExchange Id="RESTGetRoles" TechnicalProfileReferenceId="REST-GetRolesAndGroups" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
+<OrchestrationStep Order="4" Type="ClaimsExchange">
+  <ClaimsExchanges>
+    <ClaimsExchange Id="RESTGetRoles" TechnicalProfileReferenceId="REST-GetRolesAndGroups" />
+  </ClaimsExchanges>
+</OrchestrationStep>
 ```
 - Use o comando do Visual Studio Code ```B2C Renumber Policy```.
 
