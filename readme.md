@@ -220,7 +220,7 @@ No arquivo ```TrustFrameworkBase.xml``` adicione a seção abaixo ao final do ar
 
 ```
 
-- No ```TrustFrameworkBase.xml```  adicione o ```OrchestrationStep``` antes do último:
+- No ```TrustFrameworkBase.xml``` adicione o ```OrchestrationStep``` antes do último:
 ```xml
    <OrchestrationStep Order="4" Type="ClaimsExchange">
           <ClaimsExchanges>
