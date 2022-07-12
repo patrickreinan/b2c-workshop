@@ -75,7 +75,7 @@ Text:no|false
 - [Download do Starter Pack](
 https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-user-flows?pivots=b2c-custom-policy#get-the-starter-pack)
 - [Configurando as aplicações básicas para o uso de Custom Policies](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-user-flows?pivots=b2c-custom-policy#register-identity-experience-framework-applications).
-
+- [Configure uma conta de e-mail e uma API no Pipedream](https://pipedream.com/)
 
 
 ### Preparando os arquivos do B2C
@@ -132,7 +132,7 @@ Selecione a policy ```B2C_1A_SIGNUP_SIGNIN``` e faça o processo de SignUp/SignI
   </ClaimsProvider>
 ```
 
-- No ```TrustFrameworkBase.xml``` dentro de um ```ClaimProvider``` adicione a claim ```extension_subscribetonewsletter```.
+- No ```TrustFrameworkBase.xml``` dentro de um ```ClaimSchema``` adicione a claim ```extension_subscribetonewsletter```.
 ```xml
 <ClaimType Id="extension_subscribetonewsletter">
     <DisplayName>Subscribe to Newsletter</DisplayName>
@@ -168,6 +168,67 @@ Localize o ```Technical Profile AAD-UserWriteProfileUsingObjectId```  adicione:
 ```xml
 <PersistedClaim ClaimTypeReferenceId="extension_subscribetonewsletter" />
 ```
+## Adicionando uma chamada REST
+
+No arquivo ```TrustFrameworkBase.xml``` adicione a seção abaixo ao final do arquivo antes de ```</TrustFrameworkPolicy>```
+
+```xml
+
+    <ClaimsProvider>
+      <DisplayName>REST Claims Provider</DisplayName>
+        <TechnicalProfiles>
+          <TechnicalProfile Id="REST-GetRolesAndGroups">
+            <DisplayName>Get Roles and Groups</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="ServiceUrl">https://enz9idfu8r7vg3.m.pipedream.net</Item>
+              <Item Key="AuthenticationType">None</Item>
+              <Item Key="SendClaimsIn">Header</Item>
+              <Item Key="AllowInsecureAuthInProduction">True</Item>
+            </Metadata>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="objectId" />
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="roles"  />
+              <OutputClaim ClaimTypeReferenceId="groups"  />
+            </OutputClaims>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+          </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+    
 
 
+```
 
+- No ```TrustFrameworkBase.xml``` dentro de ```BuildingBlocks\ClaimsSchema``` adicione:
+```xml
+
+  <ClaimType Id="groups">
+      <DisplayName>Groups</DisplayName>
+      <DataType>stringCollection</DataType>
+  </ClaimType>
+
+  <ClaimType Id="roles">
+      <DisplayName>roles</DisplayName>
+      <DataType>stringCollection</DataType>
+  </ClaimType>
+
+```
+
+- No ```TrustFrameworkBase.xml```  adicione o ```OrchestrationStep``` antes do último:
+```xml
+   <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="RESTGetRoles" TechnicalProfileReferenceId="REST-GetRolesAndGroups" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+```
+- Use o comando do Visual Studio Code ```B2C Renumber Policy```.
+
+- No arquivo ```SignUpOrSignin.xml``` adicione as ```OutputClaims```.
+```xml
+<OutputClaim ClaimTypeReferenceId="roles"  />
+<OutputClaim ClaimTypeReferenceId="groups"  />
+```
