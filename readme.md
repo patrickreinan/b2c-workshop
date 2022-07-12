@@ -31,8 +31,11 @@ curl --location --request POST "https://login.microsoftonline.com/$TENANT/oauth2
 ```
 
 ## User Flows e Custom Policies
-- **User Flows**: modelo que permite a criação de interfaces com o usuário de forma fácil, porém menos flexível.
-- **Custom Policies**: modelo baseado em configuração declarativa (XML) que permite customizar os fluxos de interação com o usuário
+**User Flows**: modelo que permite a criação de interfaces com o usuário de forma fácil, porém menos flexível.
+
+**Custom Policies**: modelo baseado em configuração declarativa (XML) que permite customizar os fluxos de interação com o usuário
+- [Visão Geral de User Flows e Custom Policies](
+https://docs.microsoft.com/en-us/azure/active-directory-b2c/user-flow-overview?WT.mc_id=Portal-Microsoft_AAD_B2CAdmin)
 
 ## Criando um User Flow
 Configuração|Valor
@@ -75,7 +78,7 @@ Text:no|false
 - [Download do Starter Pack](
 https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-user-flows?pivots=b2c-custom-policy#get-the-starter-pack)
 - [Configurando as aplicações básicas para o uso de Custom Policies](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-user-flows?pivots=b2c-custom-policy#register-identity-experience-framework-applications).
-- [Configure uma conta de e-mail e uma API no Pipedream](https://pipedream.com/)
+- [Configure uma conta no Pipedream](https://pipedream.com/)
 
 
 ### Preparando os arquivos do B2C
@@ -232,3 +235,5 @@ No arquivo ```TrustFrameworkBase.xml``` adicione a seção abaixo ao final do ar
 <OutputClaim ClaimTypeReferenceId="roles"  />
 <OutputClaim ClaimTypeReferenceId="groups"  />
 ```
+
+Faça o procedimento de SignIn e verifique que as ```roles``` e ```groups``` estarão presentes no _token_.
